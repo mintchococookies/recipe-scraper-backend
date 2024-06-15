@@ -633,7 +633,7 @@ def keep_alive():
         except requests.exceptions.RequestException as e:
             print(f"Exception while doing health check: {str(e)}")
 
-        time.sleep(10)
+        time.sleep(800)
 
 ping_thread = threading.Thread(target=keep_alive)
 ping_thread.start()
