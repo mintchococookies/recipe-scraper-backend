@@ -13,6 +13,8 @@ import os
 from functools import wraps
 from logging.handlers import RotatingFileHandler
 from dotenv import load_dotenv
+import threading
+import time
 
 app = Flask(__name__)
 CORS(app, origins=["*"])
@@ -614,3 +616,24 @@ class ScrapeRecipeSteps(Resource):
             return {'recipe_url': recipe_url, 'recipe_name': recipe_name, 'recipe_steps': recipe_steps, 'ingredients': ingredients, 'servings': servings, 'original_unit_type': original_unit_type}, 200
         else:
             return {"error": "Oops! We encountered a hiccup while trying to extract the recipe from this website. It seems its structure is quite unique and our system is having trouble with it. We're continuously working on improvements though! Thank you for your patience and support. ^^"}     
+
+@api.route('/health-check')
+class HealthCheck(Resource):
+    def post(self):
+        return {"message": "Health check is ok"}, 200
+
+def keep_alive():
+    while True:
+        try:
+            response = requests.post('https://recipe-scraper-backend.onrender.com/health-check', json={})
+            if response.status_code == 200:
+                print("Health check successful")
+            else:
+                print(f"Health check failed with status code {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Exception while doing health check: {str(e)}")
+
+        time.sleep(10)
+
+ping_thread = threading.Thread(target=keep_alive)
+ping_thread.start()
