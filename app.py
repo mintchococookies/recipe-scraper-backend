@@ -133,9 +133,9 @@ cooking_action_words = [
 
 common_units = [
     "grams", "gram", "milliliters", "milliliter", "centimeter", "centimeter", "kilograms", "kilogram", 
-    "cups", "cup", "tablespoons", "tablespoon", "teaspoons", "teaspoon",
+    "cups", "cup", "tablespoons", "tablespoon", "teaspoons", "teaspoon", "tsp", "tbsp",
     "pounds", "pound", "ounces", "ounce", "grams", "gram", "tsp .", "tb .", "lb",
-    "cloves", "clove", "can", "tin", "jar"
+    "cloves", "clove", "can", "tin", "jar", "g"
 ]
 
 to_si_conversion = {
@@ -371,7 +371,8 @@ def standardize_units(ingredients):
 def extract_units(ingredients):
     parsed_ingredients = []
     for ingredient in ingredients:
-        match = re.match(r'^((?:\d+\s*)?(?:\d*½|\d*¼|\d*[¾¾]|\d*⅛|\d*⅔|\d+\s*[/–-]|to\s*\d+)?[\s\d/–-]*)?[\s]*(?:([a-zA-Z]+)\b)?[\s]*(.*)$', ingredient)
+        match = re.match(r'^((?:\d+\s*)?(?:\d*½|\d*¼|\d*[¾¾]|\d*⅛|\d*⅔|\d+\s*[/–-]|to\s*\d+)?[\s\d/–-]*)[\s]?([a-zA-Z]+\b)?[\s]?(.*)$', ingredient)
+        #match = re.match(r'^((?:\d+\s*)?(?:\d*½|\d*¼|\d*[¾¾]|\d*⅛|\d*⅔|\d+\s*[/–-]|to\s*\d+)?[\s\d/–-]*)?[\s]*(?:([a-zA-Z]+)\b)?[\s]*(.*)$', ingredient)
         quantity, unit, name = match.groups()
 
         if '-' in str(quantity):
@@ -384,19 +385,22 @@ def extract_units(ingredients):
             quantity = quantity.strip() if quantity else None
             quantity = quantity.replace("½", "1/2").replace("¼", "1/4").replace("¾", "3/4").replace("⅛", "1/8").replace("⅔", "2/3") if quantity else None
         
-        if unit:
-            modified_unit = re.split(r'^({})'.format('|'.join(common_units)), unit)
-            unit = modified_unit[1] if len(modified_unit) > 1 else modified_unit[0]
-            name = modified_unit[2] + " " + name if len(modified_unit) > 1 else name
-
+        if unit == "garlic":
+            name = unit
+            unit = None
         else:
-            logging.info("DEBUG: Unit is NoneType:", name)
+            if unit and unit !="garlic":
+                modified_unit = re.split(r'^({})'.format('|'.join(common_units)), unit)
+                unit = modified_unit[1] if len(modified_unit) > 1 else modified_unit[0]
+                name = modified_unit[2] + " " + name if len(modified_unit) > 1 else name
+            else:
+                logging.info("DEBUG: Unit is NoneType:", name)
         
         if unit and unit.lower() not in common_units:
             name = unit + " " + name
             unit = None
         
-        parsed_ingredients.append([quantity, unit, name.strip()])
+        parsed_ingredients.append([quantity, unit, name.strip() if name else None])
 
     standardized_ingredients = standardize_units(parsed_ingredients)
     ingredients_pre_conversion = deepcopy(standardized_ingredients)
