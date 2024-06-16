@@ -29,8 +29,8 @@ This is my personal project as a junior software engineer and may not meet produ
 - Complex nesting of divs on some websites makes it challenging to extract sections. For example, see the ingredients UI design at https://www.sidechef.com/recipes/6106/chicken_chop_with_black_pepper_sauce/, which uses many nested divs.
 
 ## Snapshots
-![Swagger UI 1](images/recipe-scraper5.png)
-![Swagger UI 2](images/recipe-scraper4.png)
+![Swagger UI 1](images/recipe-scraper5.PNG)
+![Swagger UI 2](images/recipe-scraper4.PNG)
 ![PC Main Page](images/recipe-scraper1.png)
 ![Mobile Print Page](images/recipe-scraper2.png)
 ![Mobile Main Page](images/recipe-scraper3.png)
