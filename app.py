@@ -135,7 +135,7 @@ common_units = [
     "grams", "gram", "milliliters", "milliliter", "centimeter", "centimeter", "kilograms", "kilogram", 
     "cups", "cup", "tablespoons", "tablespoon", "teaspoons", "teaspoon", "tsp", "tbsp",
     "pounds", "pound", "ounces", "ounce", "grams", "gram", "tsp .", "tb .", "lb",
-    "cloves", "clove", "can", "tin", "jar", "g"
+    "cloves", "clove", "can", "tin", "jar", "g", "kg", "litre", "litres", "millilitres", "millilitre"
 ]
 
 to_si_conversion = {
@@ -347,7 +347,7 @@ def postprocess_text(txt):
 def standardize_units(ingredients):
     unit_mapping = {'g': 'g', 'gram': 'grams', 'g': 'grams', 'lb': 'lb', 'pound': 'lb', 'pounds': 'lb', 'kg': 'kg', 'kilogram': 'kg', 
                     'kilograms': 'kg', 'oz': 'oz', 'ounce': 'oz', 'ounces': 'oz', 'mg': 'mg', 'milligram': 'mg', 'milligrams': 'mg', 
-                    'l': 'l', 'liter': 'l', 'liters': 'l', 'ml': 'ml', 'milliliter': 'ml', 'milliliters': 'ml', 'tsp': 'tsp', 
+                    'l': 'l', 'liter': 'l', 'liters': 'l', 'litre': 'l', 'litres': 'l', 'ml': 'ml', 'milliliter': 'ml', 'milliliters': 'ml', 'tsp': 'tsp', 
                     'teaspoon': 'tsp', 'teaspoons': 'tsp', 'tbsp': 'tbsp', 'tablespoon': 'tbsp', 'tablespoons': 'tbsp'}
     
     def clean_unit(unit):
@@ -509,8 +509,8 @@ def convert_units(ingredients, unit_type, requested_serving_size, servings, orig
                     else:
                         convert_to = "g"
                 # convert grams of flour to cups of flour and not oz of flour
-                if any(solid in name for solid in solids):
-                    convert_to = "cups" if unit == "g" else "oz"
+                if any(solid in name for solid in solids) and unit in ['g']:
+                    convert_to = "cups"
                 converted_unit = convert_to if convert_to else [key for key, value in conversion_dict[unit].items()][0]
                 
                 # handle cases where the quantity is a range
